@@ -31,9 +31,9 @@ public class AddGeofenceDialogFragment extends DialogFragment implements AddGeof
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder newAlertbuilder = new AlertDialog.Builder(getActivity());
 
-        newAlertbuilder.setTitle("Add Geofence")
-                .setMessage("Would you like to add a new geofence locally or import ...")
-                .setPositiveButton("Locally", new DialogInterface.OnClickListener() {
+        newAlertbuilder.setTitle("Add a Geofence")
+                .setMessage("Add a new Geofence ...")
+                .setPositiveButton("Local", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         trigger(mLocalListen);

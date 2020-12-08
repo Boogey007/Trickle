@@ -114,11 +114,9 @@ public class Preferences extends PreferenceActivity {
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.enable:
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.enable) {
+        } else {
+            return super.onOptionsItemSelected(item);
         }
         return true;
     }

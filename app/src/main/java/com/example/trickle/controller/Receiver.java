@@ -123,113 +123,104 @@ public class Receiver extends BroadcastReceiver {
             changeWiFi(context, intent.getBooleanExtra("changeWiFi", false));
             Start.createTimers(context);
         } else {
-            switch (action) {
-                case ScreenChangeReceiver.SCREEN_OFF_ACTION:
-                    if (prefs.getBoolean("off_screen_off", true)) {
-                        if (!prefs.getBoolean("ignore_screen_off", false)) {
-                            startTimer(context, TIMER_SCREEN_OFF,
-                                    prefs.getInt("screen_off_timeout", TIMEOUT_SCREEN_OFF));
-                        }
+            if (ScreenChangeReceiver.SCREEN_OFF_ACTION.equals(action)) {
+                if (prefs.getBoolean("off_screen_off", true)) {
+                    if (!prefs.getBoolean("ignore_screen_off", false)) {
+                        startTimer(context, TIMER_SCREEN_OFF,
+                                prefs.getInt("screen_off_timeout", TIMEOUT_SCREEN_OFF));
                     }
-                    break;
-                case UnlockReceiver.USER_PRESENT_ACTION:
-                case ScreenChangeReceiver.SCREEN_ON_ACTION:
-                    stopTimer(context, TIMER_SCREEN_OFF);
-                    if (prefs.getBoolean("on_unlock", true)) {
-                        boolean noNetTimer = stopTimer(context, TIMER_NO_NETWORK);
-                        if (((WifiManager) context.getApplicationContext()
-                                .getSystemService(Context.WIFI_SERVICE)).isWifiEnabled()) {
-                            if (noNetTimer && prefs.getBoolean("off_no_network", true)) {
-                                startTimer(context, TIMER_NO_NETWORK,
-                                        prefs.getInt("no_network_timeout", TIMEOUT_NO_NETWORK));
-                            }
-                        } else {
-                            changeWiFi(context, true);
-                        }
-                    }
-                    break;
-                case WifiManager.NETWORK_STATE_CHANGED_ACTION:
-                    final NetworkInfo nwi =
-                            intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                    if (nwi == null) return;
-                    if (nwi.isConnected()) {
-                        if (!nwi.getState().equals(previousState)) {
-                        }
-                        stopTimer(context, TIMER_NO_NETWORK);
-                    } else if (nwi.getState().equals(NetworkInfo.State.DISCONNECTED)) {
-                        if (prefs.getBoolean("off_no_network", true)) {
+                }
+            } else if (UnlockReceiver.USER_PRESENT_ACTION.equals(action) || ScreenChangeReceiver.SCREEN_ON_ACTION.equals(action)) {
+                stopTimer(context, TIMER_SCREEN_OFF);
+                if (prefs.getBoolean("on_unlock", true)) {
+                    boolean noNetTimer = stopTimer(context, TIMER_NO_NETWORK);
+                    if (((WifiManager) context.getApplicationContext()
+                            .getSystemService(Context.WIFI_SERVICE)).isWifiEnabled()) {
+                        if (noNetTimer && prefs.getBoolean("off_no_network", true)) {
                             startTimer(context, TIMER_NO_NETWORK,
                                     prefs.getInt("no_network_timeout", TIMEOUT_NO_NETWORK));
                         }
-                    }
-                    previousState = nwi.getState();
-                    break;
-                case WifiManager.WIFI_STATE_CHANGED_ACTION:
-                    if (intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,
-                            WifiManager.WIFI_STATE_UNKNOWN) == WifiManager.WIFI_STATE_ENABLED) {
-                        if (prefs.getBoolean("off_no_network", true)) {
-                            startTimer(context, TIMER_NO_NETWORK,
-                                    prefs.getInt("no_network_timeout", TIMEOUT_NO_NETWORK));
-                        }
-                        if (prefs.getBoolean("off_screen_off", true) &&
-                                ((Build.VERSION.SDK_INT < 20 &&
-                                        !((PowerManager) context.getApplicationContext()
-                                                .getSystemService(Context.POWER_SERVICE))
-                                                .isScreenOn()) || (Build.VERSION.SDK_INT >= 20 &&
-                                        !APILevel20Wrapper.isScreenOn(context)))) {
-                            startTimer(context, TIMER_SCREEN_OFF,
-                                    prefs.getInt("screen_off_timeout", TIMEOUT_SCREEN_OFF));
-                        }
-                    } else if (intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,
-                            WifiManager.WIFI_STATE_UNKNOWN) == WifiManager.WIFI_STATE_DISABLED) {
-                        stopTimer(context, TIMER_SCREEN_OFF);
-                        stopTimer(context, TIMER_NO_NETWORK);
-                    }
-                    break;
-                case WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION:
-                    NetworkInfo nwi2 = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
-                    WifiP2pInfo winfo =
-                            intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_INFO);
-                    if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= 14)
-                        if (nwi2.isConnected() ||
-                                (Build.VERSION.SDK_INT >= 14 && APILevel14Wrapper.groupFormed(winfo))) {
-                            if (!nwi2.getState().equals(previousState)) {
-                            }
-                            stopTimer(context, TIMER_NO_NETWORK);
-                        } else if (nwi2.getState().equals(NetworkInfo.State.DISCONNECTED)) {
-                            if (prefs.getBoolean("off_no_network", true)) {
-                                startTimer(context, TIMER_NO_NETWORK,
-                                        prefs.getInt("no_network_timeout", TIMEOUT_NO_NETWORK));
-                            }
-                        }
-                    previousState = nwi2.getState();
-                    break;
-                case Intent.ACTION_POWER_CONNECTED:
-                    if (prefs.getBoolean("power_connected", false)) {
+                    } else {
                         changeWiFi(context, true);
-                        if (prefs.getBoolean("off_screen_off",
-                                true)) {
-                            stopTimer(context, TIMER_SCREEN_OFF);
-                            prefs.edit().putBoolean("ignore_screen_off", true).apply();
-                        }
                     }
-                    break;
-                case Intent.ACTION_POWER_DISCONNECTED:
-                    if (prefs.getBoolean("power_connected", false)) {
-
-                        if (prefs.getBoolean("off_screen_off", true)) {
-                            prefs.edit().putBoolean("ignore_screen_off", false).apply();
-                            if ((Build.VERSION.SDK_INT < 20 &&
+                }
+            } else if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(action)) {
+                final NetworkInfo nwi =
+                        intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+                if (nwi == null) return;
+                if (nwi.isConnected()) {
+                    if (!nwi.getState().equals(previousState)) {
+                    }
+                    stopTimer(context, TIMER_NO_NETWORK);
+                } else if (nwi.getState().equals(NetworkInfo.State.DISCONNECTED)) {
+                    if (prefs.getBoolean("off_no_network", true)) {
+                        startTimer(context, TIMER_NO_NETWORK,
+                                prefs.getInt("no_network_timeout", TIMEOUT_NO_NETWORK));
+                    }
+                }
+                previousState = nwi.getState();
+            } else if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
+                if (intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,
+                        WifiManager.WIFI_STATE_UNKNOWN) == WifiManager.WIFI_STATE_ENABLED) {
+                    if (prefs.getBoolean("off_no_network", true)) {
+                        startTimer(context, TIMER_NO_NETWORK,
+                                prefs.getInt("no_network_timeout", TIMEOUT_NO_NETWORK));
+                    }
+                    if (prefs.getBoolean("off_screen_off", true) &&
+                            ((Build.VERSION.SDK_INT < 20 &&
                                     !((PowerManager) context.getApplicationContext()
                                             .getSystemService(Context.POWER_SERVICE))
                                             .isScreenOn()) || (Build.VERSION.SDK_INT >= 20 &&
-                                    !APILevel20Wrapper.isScreenOn(context))) {
-                                startTimer(context, TIMER_SCREEN_OFF,
-                                        prefs.getInt("screen_off_timeout", TIMEOUT_SCREEN_OFF));
-                            }
+                                    !APILevel20Wrapper.isScreenOn(context)))) {
+                        startTimer(context, TIMER_SCREEN_OFF,
+                                prefs.getInt("screen_off_timeout", TIMEOUT_SCREEN_OFF));
+                    }
+                } else if (intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,
+                        WifiManager.WIFI_STATE_UNKNOWN) == WifiManager.WIFI_STATE_DISABLED) {
+                    stopTimer(context, TIMER_SCREEN_OFF);
+                    stopTimer(context, TIMER_NO_NETWORK);
+                }
+            } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
+                NetworkInfo nwi2 = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+                WifiP2pInfo winfo =
+                        intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_INFO);
+                if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= 14)
+                    if (nwi2.isConnected() ||
+                            (Build.VERSION.SDK_INT >= 14 && APILevel14Wrapper.groupFormed(winfo))) {
+                        if (!nwi2.getState().equals(previousState)) {
+                        }
+                        stopTimer(context, TIMER_NO_NETWORK);
+                    } else if (nwi2.getState().equals(NetworkInfo.State.DISCONNECTED)) {
+                        if (prefs.getBoolean("off_no_network", true)) {
+                            startTimer(context, TIMER_NO_NETWORK,
+                                    prefs.getInt("no_network_timeout", TIMEOUT_NO_NETWORK));
                         }
                     }
-                    break;
+                previousState = nwi2.getState();
+            } else if (Intent.ACTION_POWER_CONNECTED.equals(action)) {
+                if (prefs.getBoolean("power_connected", false)) {
+                    changeWiFi(context, true);
+                    if (prefs.getBoolean("off_screen_off",
+                            true)) {
+                        stopTimer(context, TIMER_SCREEN_OFF);
+                        prefs.edit().putBoolean("ignore_screen_off", true).apply();
+                    }
+                }
+            } else if (Intent.ACTION_POWER_DISCONNECTED.equals(action)) {
+                if (prefs.getBoolean("power_connected", false)) {
+
+                    if (prefs.getBoolean("off_screen_off", true)) {
+                        prefs.edit().putBoolean("ignore_screen_off", false).apply();
+                        if ((Build.VERSION.SDK_INT < 20 &&
+                                !((PowerManager) context.getApplicationContext()
+                                        .getSystemService(Context.POWER_SERVICE))
+                                        .isScreenOn()) || (Build.VERSION.SDK_INT >= 20 &&
+                                !APILevel20Wrapper.isScreenOn(context))) {
+                            startTimer(context, TIMER_SCREEN_OFF,
+                                    prefs.getInt("screen_off_timeout", TIMEOUT_SCREEN_OFF));
+                        }
+                    }
+                }
             }
         }
     }

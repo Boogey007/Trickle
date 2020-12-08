@@ -24,8 +24,8 @@ public class LocativeLocationManager {
     private Timer timer1;
     private LocationManager lm;
     private LocationResult locationResult;
-    private boolean gps_enabled = false;
-    private boolean network_enabled = false;
+    private boolean gps_on = false;
+    private boolean networok_on = false;
 
     public boolean getLocation(Activity context, LocationResult result) {
         locationResult = result;
@@ -33,15 +33,15 @@ public class LocativeLocationManager {
             lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         try {
-            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            gps_on = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
         } catch (Exception ex) {
         }
         try {
-            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            networok_on = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
         } catch (Exception ex) {
         }
 
-        if (!gps_enabled && !network_enabled)
+        if (!gps_on && !networok_on)
             return false;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -63,21 +63,19 @@ public class LocativeLocationManager {
     }
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST:
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    requestUpdates();
-                }
-                break;
+        if (requestCode == MY_PERMISSIONS_REQUEST) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                requestUpdates();
+            }
         }
     }
 
     private void requestUpdates() {
         try {
-            if (gps_enabled)
+            if (gps_on)
                 lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListenerGps);
-            if (network_enabled)
+            if (networok_on)
                 lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNetwork);
             timer1 = new Timer();
             timer1.schedule(new GetLastLocation(), 25000);
@@ -127,9 +125,9 @@ public class LocativeLocationManager {
                 lm.removeUpdates(locationListenerNetwork);
 
                 Location net_loc = null, gps_loc = null;
-                if (gps_enabled)
+                if (gps_on)
                     gps_loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (network_enabled)
+                if (networok_on)
                     net_loc = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
                 if (gps_loc != null && net_loc != null) {

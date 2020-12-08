@@ -69,13 +69,13 @@
                 android:src="@drawable/ic_build" />
 
             <TextView
-                android:id="@+id/lowBatMuteText"
+                android:id="@+id/batteryMuteOnLowText"
                 style="@style/cardItemTheme"
                 android:layout_weight="1"
                 android:text="@string/lowBatSilentMode" />
 
             <android.support.v7.widget.SwitchCompat
-                android:id="@+id/lowBatMuteSwitch"
+                android:id="@+id/batteryMuteOnLowSwitch"
                 style="@style/cardSwitchTheme" />
 
         </LinearLayout>

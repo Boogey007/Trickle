@@ -1,5 +1,7 @@
 package com.example.trickle.controller;
 
+import android.content.SharedPreferences;
+
 import com.example.trickle.controller.modules.AppModule;
 import com.example.trickle.controller.modules.PersistencyModule;
 import com.example.trickle.controller.notification.NotificationManager;
@@ -14,6 +16,7 @@ import com.example.trickle.controller.view.SettingsActivity;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import dagger.Provides;
 
 @Singleton
 @Component(modules = {AppModule.class, PersistencyModule.class})

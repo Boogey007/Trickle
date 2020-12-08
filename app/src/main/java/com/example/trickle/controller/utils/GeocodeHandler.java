@@ -23,19 +23,14 @@ public class GeocodeHandler extends Handler {
     @Override
     public void handleMessage(Message msg) {
         AddEditGeofenceActivity target = mTarget.get();
-        switch (msg.what) {
-            case UPDATE_ADDRESS: {
-                Button button = (Button) target.findViewById(R.id.address_button);
-                button.setText((String) msg.obj);
-                break;
+        if (msg.what == UPDATE_ADDRESS) {
+            Button button = (Button) target.findViewById(R.id.address_button);
+            button.setText((String) msg.obj);
+        } else if (msg.what == SAVE_AND_FINISH) {
+            if (target.mProgressDialog.isShowing()) {
+                target.mProgressDialog.hide();
             }
-            case SAVE_AND_FINISH: {
-                if (target.mProgressDialog.isShowing()) {
-                    target.mProgressDialog.hide();
-                }
-                target.save(true);
-                break;
-            }
+            target.save(true);
         }
 
     }

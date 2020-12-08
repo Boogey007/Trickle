@@ -38,22 +38,16 @@ public class ControllerService extends Service {
 
             if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(intent.getAction())) {
                 wifiState = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0);
-                switch (wifiState) {
-                    case WifiManager.WIFI_STATE_DISABLED:
-                        broadcast_intent.putExtra("wifi_state", -1);
-                        break;
-                    case WifiManager.WIFI_STATE_DISABLING:
-                        broadcast_intent.putExtra("wifi_state", 0);
-                        break;
-                    case WifiManager.WIFI_STATE_ENABLED:
-                        broadcast_intent.putExtra("wifi_state", 1);
-                        break;
-                    case WifiManager.WIFI_STATE_ENABLING:
-                        broadcast_intent.putExtra("wifi_state", 0);
-                        break;
-                    default:
-                        broadcast_intent.putExtra("wifi_state", 0);
-                        break;
+                if (wifiState == WifiManager.WIFI_STATE_DISABLED) {
+                    broadcast_intent.putExtra("wifi_state", -1);
+                } else if (wifiState == WifiManager.WIFI_STATE_DISABLING) {
+                    broadcast_intent.putExtra("wifi_state", 0);
+                } else if (wifiState == WifiManager.WIFI_STATE_ENABLED) {
+                    broadcast_intent.putExtra("wifi_state", 1);
+                } else if (wifiState == WifiManager.WIFI_STATE_ENABLING) {
+                    broadcast_intent.putExtra("wifi_state", 0);
+                } else {
+                    broadcast_intent.putExtra("wifi_state", 0);
                 }
             }
             if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
@@ -87,16 +81,12 @@ public class ControllerService extends Service {
 
             if (intent.getAction().matches(HOT_CHANGE_ACTION)) {
                 int state = intent.getIntExtra("wifi_state", 0);
-                switch (state) {
-                    case HOTSPOT_DISABLED:
-                        broadcast_intent.putExtra("hotspot_state", -1);
-                        break;
-                    case HOTSPOT_ENABLED:
-                        broadcast_intent.putExtra("hotspot_state", 1);
-                        break;
-                    default:
-                        broadcast_intent.putExtra("hotspot_state", 0);
-                        break;
+                if (state == HOTSPOT_DISABLED) {
+                    broadcast_intent.putExtra("hotspot_state", -1);
+                } else if (state == HOTSPOT_ENABLED) {
+                    broadcast_intent.putExtra("hotspot_state", 1);
+                } else {
+                    broadcast_intent.putExtra("hotspot_state", 0);
                 }
             }
             broadcast_intent.setAction("com.example.trickle.controller.controllerservice");

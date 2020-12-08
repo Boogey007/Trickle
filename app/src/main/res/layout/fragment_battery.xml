@@ -29,7 +29,7 @@
                 android:paddingVertical="16dp">
 
                 <ProgressBar
-                    android:id="@+id/batteryProgressBar"
+                    android:id="@+id/progressBarOfBattery"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="165dp"
                     android:layout_height="152dp"
@@ -42,11 +42,11 @@
                     android:textColor="@color/black" />
 
                 <TextView
-                    android:id="@+id/batteryCurrentValue"
+                    android:id="@+id/currentBatteryValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignStart="@+id/batteryProgressBar"
-                    android:layout_alignTop="@+id/batteryProgressBar"
+                    android:layout_alignStart="@+id/progressBarOfBattery"
+                    android:layout_alignTop="@+id/progressBarOfBattery"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="66dp"
@@ -58,11 +58,11 @@
                     android:id="@+id/batteryPercentageSign"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@+id/batteryCurrentValue"
-                    android:layout_alignBottom="@+id/batteryCurrentValue"
+                    android:layout_alignBaseline="@+id/currentBatteryValue"
+                    android:layout_alignBottom="@+id/currentBatteryValue"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    android:layout_toEndOf="@+id/batteryCurrentValue"
+                    android:layout_toEndOf="@+id/currentBatteryValue"
                     android:text="%"
                     android:textColor="@color/black"
                     android:textSize="16sp" />

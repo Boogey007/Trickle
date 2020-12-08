@@ -9,9 +9,4 @@ public enum EventType {
 
     EventType(String apiName) { mEvent = apiName; }
 
-    public String getEventName() { return mEvent; }
-
-    public boolean isEnter() { return this == ENTER; }
-
-    public boolean isExit() { return this == EXIT; }
 }

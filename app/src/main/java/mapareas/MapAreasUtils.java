@@ -4,11 +4,6 @@ import android.location.Location;
 
 import com.google.android.gms.maps.model.LatLng;
 
-/**
- * Utilities
- * 
- * @author ivanschuetz 
- */
 public class MapAreasUtils {
 
     public static LatLng toRadiusLatLng(LatLng center, double radius) {

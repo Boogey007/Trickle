@@ -23,7 +23,7 @@
         <include layout="@layout/line_divider" />
 
         <RelativeLayout
-            android:id="@+id/batteryTemp"
+            android:id="@+id/textViewbatteryTemp"
             style="@style/smallerCardLinearLayoutTheme">
 
             <ImageView
@@ -42,7 +42,7 @@
                 android:text="Temperature" />
 
             <TextView
-                android:id="@+id/batteryTemp_Text2"
+                android:id="@+id/tempOfBattery_txt2"
                 style="@style/cardItemDisabledTheme"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
                 android:text="Voltage" />
 
             <TextView
-                android:id="@+id/batteryVoltage_Text2"
+                android:id="@+id/voltageOfBattery_txt2"
                 style="@style/cardItemDisabledTheme"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
         <include layout="@layout/line_divider" />
 
         <RelativeLayout
-            android:id="@+id/batteryHealth"
+            android:id="@+id/healthOfBattery"
             style="@style/smallerCardLinearLayoutTheme">
 
             <ImageView
@@ -103,7 +103,7 @@
                 android:text="Health" />
 
             <TextView
-                android:id="@+id/batteryHealth_Text2"
+                android:id="@+id/healthOfBattery_txt2"
                 style="@style/cardItemDisabledTheme"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -133,7 +133,7 @@
                 android:text="Technology" />
 
             <TextView
-                android:id="@+id/batteryTech_Text2"
+                android:id="@+id/techOfBattery_txt2"
                 style="@style/cardItemDisabledTheme"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -163,7 +163,7 @@
                 android:text="Charge Status" />
 
             <TextView
-                android:id="@+id/batteryPlugged_text2"
+                android:id="@+id/pluggedStatusOfBattery_txt2"
                 style="@style/cardItemDisabledTheme"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

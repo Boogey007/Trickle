@@ -422,7 +422,7 @@ public class AddEditGeofenceActivity extends BaseActivity implements OnMapReadyC
                 LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
                 updateAddressField(address);
 
-                mCircle.setCenter(latLng);
+                mCircle.setCenterOfCircle(latLng);
                 theGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
             } else {
                 new AlertDialog.Builder(this)
@@ -496,7 +496,7 @@ public class AddEditGeofenceActivity extends BaseActivity implements OnMapReadyC
         int radiusMeters = mRadMinMax.getProgress();
         mRadLabel.setText(String.format(getResources().getConfiguration().locale, "%d m", radiusMeters));
         if (mCircle != null) {
-            mCircle.setRadius(radiusMeters);
+            mCircle.setRadiusOfCircle(radiusMeters);
         }
     }
 

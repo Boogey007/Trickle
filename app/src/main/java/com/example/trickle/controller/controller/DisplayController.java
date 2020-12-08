@@ -2,11 +2,8 @@ package com.example.trickle.controller.controller;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Build;
@@ -30,8 +27,8 @@ public class DisplayController {
     private BrightnessObserver brightnessObserver = null;
     private AutoBrightnessObserver autobrightnessObserver = null;
 
-    private SwitchCompat autoBrightnessSwitch;
-    private Slider brightnessSlider;
+    private SwitchCompat brightnessAuto;
+    private Slider diplayBrightSlider;
 
     private static DisplayController mInstance;
 
@@ -49,9 +46,9 @@ public class DisplayController {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void init() {
-        brightnessSlider = (Slider) activity.findViewById(R.id.brightnessSlider);
-        autoBrightnessSwitch = (SwitchCompat) activity.findViewById(R.id.autoBrightnessSwitch);
-        initSlider(brightnessSlider);
+        diplayBrightSlider = (Slider) activity.findViewById(R.id.brightnessSlider);
+        brightnessAuto = (SwitchCompat) activity.findViewById(R.id.autoBrightnessSwitch);
+        initSlider(diplayBrightSlider);
 
         final Uri BRIGHTNESS_URL = Settings.System.getUriFor(android.provider.Settings.System.SCREEN_BRIGHTNESS);
         brightnessObserver = new BrightnessObserver(new Handler());
@@ -66,10 +63,10 @@ public class DisplayController {
         int value = Settings.Secure.getInt(context.getContentResolver(), ACCESSIBILITY_DISPLAY_DALTONIZER_ENABLED, 0);
 
         if (checkIfAutoBrightness()) {
-            autoBrightnessSwitch.setChecked(true);
-            brightnessSlider.setValue(0);
+            brightnessAuto.setChecked(true);
+            diplayBrightSlider.setValue(0);
         } else {
-            autoBrightnessSwitch.setChecked(false);
+            brightnessAuto.setChecked(false);
         }
     }
 
@@ -87,8 +84,8 @@ public class DisplayController {
         boolean canWriteSettings = Settings.System.canWrite(context);
 
         if (!canWriteSettings) {
-            brightnessSlider.setEnabled(false);
-            autoBrightnessSwitch.setEnabled(false);
+            diplayBrightSlider.setEnabled(false);
+            brightnessAuto.setEnabled(false);
             Toast.makeText(context, "Please Enable Write Permissions", Toast.LENGTH_SHORT).show();
             askWritePermissions();
         }
@@ -103,18 +100,12 @@ public class DisplayController {
         });
     }
 
-    /**
-     * Shows the modify system settings panel to allow the user to add WRITE_SETTINGS permissions for this app.
-     */
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void askWritePermissions() {
         Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
         context.startActivity(intent);
     }
 
-    /**
-     * Get current system brightness value as an integer
-     */
     public int getCurrentBrightness() {
         return Settings.System.getInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, 0);
     }
@@ -124,12 +115,8 @@ public class DisplayController {
         Settings.System.putInt(context.getContentResolver(),
                 Settings.System.SCREEN_BRIGHTNESS,
                 screenBrightnessValue);
-
     }
 
-    /**
-     * Turn automatic brightness mode on - set manual mode off
-     */
     @TargetApi(Build.VERSION_CODES.M)
     public void setBrightnessToAuto() {
         boolean canWriteSettings = Settings.System.canWrite(context);
@@ -140,7 +127,7 @@ public class DisplayController {
             Settings.System.putInt(context.getContentResolver(),
                     Settings.System.SCREEN_BRIGHTNESS_MODE,
                     Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
-            brightnessSlider.setValue(0);
+            diplayBrightSlider.setValue(0);
         }
     }
 
@@ -155,45 +142,7 @@ public class DisplayController {
                     context.getContentResolver(),
                     Settings.System.SCREEN_BRIGHTNESS_MODE,
                     Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
-            brightnessSlider.setValue(getCurrentBrightness());
-        }
-    }
-
-    public void showRootWorkaroundInstructions(final Context context) {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this.context);
-        builder.setMessage("Since your phone is not rooted, you must manually grant the permission " +
-                "'android.permission.WRITE_SECURE_SETTINGS' by going to adb and inputting the following command" +
-                " adb -d shell pm grant com.example.trickle.controller android.permission.WRITE_SECURE_SETTINGS")
-                .setCancelable(false)
-                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                })
-                .setNegativeButton("Copy the command", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        setClipboard(context, "adb -d shell pm grant com.example.trickle.controller android.permission.WRITE_SECURE_SETTINGS");
-                        Toast.makeText(context, "Command copied", Toast.LENGTH_SHORT)
-                                .show();
-                        dialog.cancel();
-                    }
-                });
-        android.app.AlertDialog alert = builder.create();
-        alert.show();
-    }
-
-    /**
-     * @param context
-     * @param text    - Copy the text passed in the parameters onto the clipboard
-     */
-    private void setClipboard(Context context, String text) {
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
-            android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-            clipboard.setText(text);
-        } else {
-            android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-            android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", text);
-            clipboard.setPrimaryClip(clip);
+            diplayBrightSlider.setValue(getCurrentBrightness());
         }
     }
 
@@ -206,23 +155,20 @@ public class DisplayController {
 
         } else {
             if (checkIfAutoBrightness()) {
-                autoBrightnessSwitch.setChecked(true);
-                brightnessSlider.setValue(0);
+                brightnessAuto.setChecked(true);
+                diplayBrightSlider.setValue(0);
             } else {
-                autoBrightnessSwitch.setChecked(false);
-                brightnessSlider.setValue(getCurrentBrightness());
+                brightnessAuto.setChecked(false);
+                diplayBrightSlider.setValue(getCurrentBrightness());
             }
         }
     }
 
     public void enableBrightnessSettings() {
-        brightnessSlider.setEnabled(true);
-        autoBrightnessSwitch.setEnabled(true);
+        diplayBrightSlider.setEnabled(true);
+        brightnessAuto.setEnabled(true);
     }
 
-    /**
-     * BrightnessObserver: Handle the change in brightness in real time and change the Slider value
-     */
     private class BrightnessObserver extends ContentObserver {
         public BrightnessObserver(Handler h) {
             super(h);
@@ -239,20 +185,15 @@ public class DisplayController {
             super.onChange(selfChange);
             boolean canWriteSettings = Settings.System.canWrite(context);
 
-            if (!canWriteSettings) {
-                brightnessSlider.setEnabled(false);
-            } else {
-                brightnessSlider.setEnabled(true);
+            if (!canWriteSettings) diplayBrightSlider.setEnabled(false);
+            else {
+                diplayBrightSlider.setEnabled(true);
                 autoBrightnessToggle();
-                brightnessSlider.setValue(getCurrentBrightness());
+                diplayBrightSlider.setValue(getCurrentBrightness());
             }
         }
     }
 
-
-    /**
-     * AutoBrightnessObserver: Handle the change in brightness in real time and change the Slider Value
-     */
     private class AutoBrightnessObserver extends ContentObserver {
         AutoBrightnessObserver(Handler h) {
             super(h);
@@ -270,10 +211,9 @@ public class DisplayController {
 
             boolean canWriteSettings = Settings.System.canWrite(context);
 
-            if (!canWriteSettings) {
-                brightnessSlider.setEnabled(false);
-            } else {
-                brightnessSlider.setEnabled(true);
+            if (!canWriteSettings) diplayBrightSlider.setEnabled(false);
+            else {
+                diplayBrightSlider.setEnabled(true);
                 autoBrightnessToggle();
             }
         }

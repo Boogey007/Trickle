@@ -27,6 +27,7 @@ import com.google.android.gms.location.LocationServices;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class LocativeService extends Service implements
@@ -59,19 +60,17 @@ public class LocativeService extends Service implements
         }
         mAction = (Action) intent.getSerializableExtra(EXTRA_ACTION);
 
-        switch (mAction) {
-            case ADD:
-                ArrayList<Geofences.Geofence> geofences = (ArrayList<Geofences.Geofence>) intent.getSerializableExtra(EXTRA_GEOFENCE);
-                for (Geofences.Geofence newGeofence : geofences) {
-                    Geofence googleGeofence = newGeofence.toGeofence();
-                    if (googleGeofence != null) {
-                        mGeofenceListsToAdd.add(googleGeofence);
-                    }
+        if (mAction == Action.ADD) {
+            ArrayList<Geofences.Geofence> geofences = (ArrayList<Geofences.Geofence>) intent.getSerializableExtra(EXTRA_GEOFENCE);
+            for (Iterator<Geofences.Geofence> iterator = geofences.iterator(); iterator.hasNext(); ) {
+                Geofences.Geofence newGeofence = iterator.next();
+                Geofence googleGeofence = newGeofence.toGeofence();
+                if (googleGeofence != null) {
+                    mGeofenceListsToAdd.add(googleGeofence);
                 }
-                break;
-            case REMOVE:
-                mGeofenceListsToRemove = Arrays.asList(intent.getStringArrayExtra(EXTRA_REQUEST_IDS));
-                break;
+            }
+        } else if (mAction == Action.REMOVE) {
+            mGeofenceListsToRemove = Arrays.asList(intent.getStringArrayExtra(EXTRA_REQUEST_IDS));
         }
         buildGoogleApiClient();
         mGoogleApiClient.connect();
@@ -87,27 +86,24 @@ public class LocativeService extends Service implements
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        switch (mAction) {
-            case ADD:
-                if (mGeofenceListsToAdd.size() > 0) {
-                    GeofencingRequest request = getGeofencingRequest(mGeofenceListsToAdd);
-                }
-                break;
-            case REMOVE:
-                if (mGeofenceListsToRemove.size() > 0) {
-                    PendingResult<Status> result = LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, mGeofenceListsToRemove);
-                    result.setResultCallback(new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(Status status) {
-                            if (status.isSuccess()) {
-                            } else {
-                                String errorMessage = GeofenceErrorMessages.getErrorString(LocativeService.this, status.getStatusCode());
-                                Log.e(TAG, errorMessage);
-                            }
+        if (mAction == Action.ADD) {
+            if (mGeofenceListsToAdd.size() > 0) {
+                GeofencingRequest request = getGeofencingRequest(mGeofenceListsToAdd);
+            }
+        } else if (mAction == Action.REMOVE) {
+            if (mGeofenceListsToRemove.size() > 0) {
+                PendingResult<Status> result = LocationServices.GeofencingApi.removeGeofences(mGoogleApiClient, mGeofenceListsToRemove);
+                result.setResultCallback(new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
+                        if (status.isSuccess()) {
+                        } else {
+                            String errorMessage = GeofenceErrorMessages.getErrorString(LocativeService.this, status.getStatusCode());
+                            Log.e(TAG, errorMessage);
                         }
-                    });
-                }
-                break;
+                    }
+                });
+            }
         }
     }
 
@@ -116,7 +112,7 @@ public class LocativeService extends Service implements
 
     @Override
     public void onConnectionSuspended(int cause) {
-        Log.i(TAG, "Connection suspended");
+        Log.i(TAG, "Connection bad");
     }
 
     @Override

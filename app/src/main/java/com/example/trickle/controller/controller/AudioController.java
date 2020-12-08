@@ -32,8 +32,7 @@ public class AudioController {
         android.app.NotificationManager notificationManager =
                 (android.app.NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && !notificationManager.isNotificationPolicyAccessGranted()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !notificationManager.isNotificationPolicyAccessGranted()) {
 
             Intent intent = new Intent(
                     android.provider.Settings
@@ -41,18 +40,12 @@ public class AudioController {
 
             mContext.startActivity(intent);
         } else {
-            switch (modeSetting) {
-                case Constants.NORMAL_MODE:
-                    setPhoneRingerToNormal();
-                    break;
-                case Constants.VIBRATE_MODE:
-                    setPhoneRingerToVibrate();
-                    break;
-                case SILENT_MODE:
-                    setPhoneRingerToSilent();
-                    break;
-                default:
-                    break;
+            if (modeSetting == NORMAL_MODE) {
+                setPhoneRingerToNormal();
+            } else if (modeSetting == VIBRATE_MODE) {
+                setPhoneRingerToVibrate();
+            } else if (modeSetting == SILENT_MODE) {
+                setPhoneRingerToSilent();
             }
         }
     }
@@ -70,15 +63,14 @@ public class AudioController {
     }
 
     public int getRingerMode() {
-        switch (aM.getRingerMode()) {
-            case AudioManager.RINGER_MODE_NORMAL:
-                return NORMAL_MODE;
-            case AudioManager.RINGER_MODE_VIBRATE:
-                return VIBRATE_MODE;
-            case AudioManager.RINGER_MODE_SILENT:
-                return SILENT_MODE;
-            default:
-                return 0;
+        int ringerMode = aM.getRingerMode();
+        if (ringerMode == AudioManager.RINGER_MODE_NORMAL) {
+            return NORMAL_MODE;
+        } else if (ringerMode == AudioManager.RINGER_MODE_VIBRATE) {
+            return VIBRATE_MODE;
+        } else if (ringerMode == AudioManager.RINGER_MODE_SILENT) {
+            return SILENT_MODE;
         }
+        return 0;
     }
 }

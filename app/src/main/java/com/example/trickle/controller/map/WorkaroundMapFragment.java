@@ -12,24 +12,24 @@ import android.widget.FrameLayout;
 import com.google.android.gms.maps.SupportMapFragment;
 
 public class WorkaroundMapFragment extends SupportMapFragment {
-    private OnTouchListener mListener;
+    private OnTouchListener touchLister;
 
     @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle savedInstance) {
         View layout = super.onCreateView(layoutInflater, viewGroup, savedInstance);
 
-        TouchableWrapper frameLayout = new TouchableWrapper(getActivity());
+        TouchableWrapper layoutOfFrame = new TouchableWrapper(getActivity());
 
-        frameLayout.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
+        layoutOfFrame.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
 
-        ((ViewGroup) layout).addView(frameLayout,
+        ((ViewGroup) layout).addView(layoutOfFrame,
                 new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
         return layout;
     }
 
     public void setListener(OnTouchListener listener) {
-        mListener = listener;
+        touchLister = listener;
     }
 
     public interface OnTouchListener {
@@ -44,13 +44,11 @@ public class WorkaroundMapFragment extends SupportMapFragment {
 
         @Override
         public boolean dispatchTouchEvent(MotionEvent event) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    mListener.onTouch();
-                    break;
-                case MotionEvent.ACTION_UP:
-                    mListener.onTouch();
-                    break;
+            int action = event.getAction();
+            if (action == MotionEvent.ACTION_DOWN) {
+                touchLister.onTouch();
+            } else if (action == MotionEvent.ACTION_UP) {
+                touchLister.onTouch();
             }
             return super.dispatchTouchEvent(event);
         }

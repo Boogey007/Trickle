@@ -47,13 +47,15 @@ public class GeofenceFragment extends android.support.v4.app.ListFragment {
 
         List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
 
-        for (int i = 0; i < Geofences.GeofenceItems.size(); i++) {
+        int i = 0;
+        while (i < Geofences.GeofenceItems.size()) {
             HashMap<String, String> hm = new HashMap<String, String>();
             Geofences.Geofence geofence = Geofences.GeofenceItems.get(i);
             hm.put("image", "0");
             hm.put("title", geofence.name);
             hm.put("subtitle", "ID: " + geofence.getRelevantId());
             aList.add(hm);
+            i++;
         }
 
         String[] from = {
@@ -124,15 +126,15 @@ public class GeofenceFragment extends android.support.v4.app.ListFragment {
         setListShown(true);
         refresh();
 
-        setEmptyText("You currently don't have any Geofences. Click the \"+\" to add some and get started.");
+        setEmptyText("You don't have any Geofences. Click \"+\" to add");
 
         getListView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> av, View v, int position, long id) {
                 final int pos = position;
                 final View aView = v;
                 new AlertDialog.Builder(v.getContext())
-                        .setTitle(" Delete entry")
-                        .setMessage("Are you sure you want to delete this entry?")
+                        .setTitle(" Delete")
+                        .setMessage("Are you sure?")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 ContentValues values = new ContentValues();

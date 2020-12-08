@@ -39,35 +39,35 @@ import static com.example.trickle.controller.TrickleBatteryManagerApplication.ge
 import static com.example.trickle.controller.utils.Constants.SILENT_MODE;
 
 public class BatteryFragment extends Fragment {
-    @BindView(R.id.batteryTemp_Text2)
-    TextView batteryTemp;
+    @BindView(R.id.tempOfBattery_txt2)
+    TextView textViewbatteryTemp;
 
-    @BindView(R.id.batteryHealth_Text2)
-    TextView batteryHealth;
+    @BindView(R.id.healthOfBattery_txt2)
+    TextView healthOfBattery;
 
-    @BindView(R.id.batteryTech_Text2)
+    @BindView(R.id.techOfBattery_txt2)
     TextView batteryTech;
 
-    @BindView(R.id.batteryVoltage_Text2)
+    @BindView(R.id.voltageOfBattery_txt2)
     TextView batteryVoltage;
 
-    @BindView(R.id.batteryPlugged_text2)
+    @BindView(R.id.pluggedStatusOfBattery_txt2)
     TextView batteryPlugged;
 
-    @BindView(R.id.batteryProgressBar)
-    ProgressBar batteryProgressBar;
+    @BindView(R.id.progressBarOfBattery)
+    ProgressBar progressBarOfBattery;
 
-    @BindView(R.id.batteryCurrentValue)
-    TextView batteryCurrentValue;
+    @BindView(R.id.currentBatteryValue)
+    TextView currentBatteryValue;
 
-    @BindView(R.id.lowBatMuteText)
+    @BindView(R.id.batteryMuteOnLowText)
     TextView lowBatMute;
 
-    @BindView(R.id.lowBatMuteSwitch)
-    SwitchCompat lowBatMuteSwitch;
+    @BindView(R.id.batteryMuteOnLowSwitch)
+    SwitchCompat batteryMuteOnLowSwitch;
 
     @BindView(R.id.lowWifiTrigSwitch)
-    SwitchCompat lowBatWifiSwitch;
+    SwitchCompat wifiSwitchOnLowBattery;
 
     @BindView(R.id.nightModeText)
     TextView nightModeText;
@@ -91,8 +91,7 @@ public class BatteryFragment extends Fragment {
         unbinder = ButterKnife.bind(this, view);
         batteryService = new BatteryService();
         audioController = AudioController.getInstance(mContext);
-        preferences =
-                PreferenceManager.getDefaultSharedPreferences(getAppContext());
+        preferences = PreferenceManager.getDefaultSharedPreferences(getAppContext());
         return view;
     }
 
@@ -104,9 +103,34 @@ public class BatteryFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        lowBatWifiSwitch.setChecked(preferences.getBoolean(Preferences.WIFI_LOW_BAT_TRIGGER, false));
-        lowBatMuteSwitch.setChecked(preferences.getBoolean(Preferences.SILENT_LOW_BAT_TRIGGER, false));
+        wifiSwitchOnLowBattery.setChecked(preferences.getBoolean(Preferences.WIFI_LOW_BAT_TRIGGER, false));
+        batteryMuteOnLowSwitch.setChecked(preferences.getBoolean(Preferences.SILENT_LOW_BAT_TRIGGER, false));
     }
+    // --- All Battery Stats --- //
+    // ALL BATTERY CONSTANTS
+    // BATTERY_HEALTH_COLD
+    // BATTERY_HEALTH_DEAD
+    // BATTERY_HEALTH_GOOD
+    // BATTERY_HEALTH_OVERHEAT
+    // BATTERY_HEALTH_OVER_VOLTAGE
+    // BATTERY_HEALTH_UNKNOWN
+    // BATTERY_HEALTH_UNSPECIFIED_FAILURE
+    // BATTERY_PLUGGED_AC
+    // BATTERY_PLUGGED_USB
+    // BATTERY_PLUGGED_WIRELESS
+    // BATTERY_PROPERTY_CAPACITY
+    // BATTERY_PROPERTY_CHARGE_COUNTER
+    // BATTERY_PROPERTY_CURRENT_AVERAGE
+    // BATTERY_PROPERTY_CURRENT_NOW
+    // BATTERY_PROPERTY_ENERGY_COUNTER
+    // BATTERY_PROPERTY_STATUS
+    // BATTERY_PROPERTY_STATUS
+    // BATTERY_STATUS_CHARGING
+    // BATTERY_STATUS_DISCHARGING
+    // BATTERY_STATUS_FULL
+    // BATTERY_STATUS_NOT_CHARGING
+    // BATTERY_STATUS_UNKNOWN
+    // EXTRA_BATTERY_LOW
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -123,79 +147,72 @@ public class BatteryFragment extends Fragment {
 
             batteryTech.setText(technology);
 
-            batteryProgressBar.setProgress((int) (batteryPercentage * 100));
-            batteryCurrentValue.setText("" + (int) (batteryPercentage * 100));
+            progressBarOfBattery.setProgress((int) (batteryPercentage * 100));
+            currentBatteryValue.setText("" + (int) (batteryPercentage * 100));
 
-            batteryHealth.setTextColor(health.equals("Good") ? getResources().getColor(R.color.green) : getResources().getColor(R.color.red));
-            batteryHealth.setText(health);
+            healthOfBattery.setTextColor(health.equals("Good") ? getResources().getColor(R.color.green) : getResources().getColor(R.color.red));
+            healthOfBattery.setText(health);
 
-            Float floatVoltage = (float) (voltage) / 1000;
-            batteryVoltage.setText("" + floatVoltage + " V");
+            Float voltageOfBattery = (float) (voltage) / 1000;
+            batteryVoltage.setText("" + voltageOfBattery + " V");
 
-            Float floatTemperature = (float) (temperature) / 10;
-            if (floatTemperature > 45) {
-                batteryTemp.setTextColor(getResources().getColor(R.color.red));
-            } else if (floatTemperature <= 45 && floatTemperature > 35) {
-                batteryTemp.setTextColor(getResources().getColor(R.color.yellow));
+            Float tempOfBattery = (float) (temperature) / 10;
+            if (tempOfBattery > 45) {
+                textViewbatteryTemp.setTextColor(getResources().getColor(R.color.red));
+            } else if (tempOfBattery <= 45 && tempOfBattery > 35) {
+                textViewbatteryTemp.setTextColor(getResources().getColor(R.color.yellow));
             } else {
-                batteryTemp.setTextColor(getResources().getColor(R.color.green));
+                textViewbatteryTemp.setTextColor(getResources().getColor(R.color.green));
             }
-            batteryTemp.setText("" + floatTemperature + " °C");
+            textViewbatteryTemp.setText("" + tempOfBattery + " °C");
 
-            switch (plugged) {
-                case BatteryManager.BATTERY_PLUGGED_AC:
-                    batteryPlugged.setText("AC");
-                    batteryPlugged.setTextColor(getResources().getColor(R.color.green));
-                    break;
-                case BatteryManager.BATTERY_PLUGGED_USB:
-                    batteryPlugged.setText("USB");
-                    batteryPlugged.setTextColor(getResources().getColor(R.color.green));
-                    break;
-                case BatteryManager.BATTERY_PLUGGED_WIRELESS:
-                    batteryPlugged.setText("Wireless");
-                    batteryPlugged.setTextColor(getResources().getColor(R.color.green));
-                    break;
-                default:
-                    batteryPlugged.setText("Not Plugged");
-                    batteryPlugged.setTextColor(Color.LTGRAY);
-                    break;
+            if (plugged == BatteryManager.BATTERY_PLUGGED_AC) {
+                batteryPlugged.setText("AC");
+                batteryPlugged.setTextColor(getResources().getColor(R.color.green));
+            } else if (plugged == BatteryManager.BATTERY_PLUGGED_USB) {
+                batteryPlugged.setText("USB");
+                batteryPlugged.setTextColor(getResources().getColor(R.color.green));
+            } else if (plugged == BatteryManager.BATTERY_PLUGGED_WIRELESS) {
+                batteryPlugged.setText("Wireless");
+                batteryPlugged.setTextColor(getResources().getColor(R.color.green));
+            } else {
+                batteryPlugged.setText("Not Plugged");
+                batteryPlugged.setTextColor(Color.LTGRAY);
             }
         }
     }
 
     public String getHealth(int health) {
-        String batteryStatus = "";
-        switch (health) {
-            case BatteryManager.BATTERY_HEALTH_COLD:
-                batteryStatus = "Cold";
-                break;
-            case BatteryManager.BATTERY_HEALTH_DEAD:
-                batteryStatus = "Dead";
-                break;
-            case BatteryManager.BATTERY_HEALTH_GOOD:
-                batteryStatus = "Good";
-                break;
-            case BatteryManager.BATTERY_HEALTH_OVERHEAT:
-                batteryStatus = "Overheat";
-                break;
-            case BatteryManager.BATTERY_HEALTH_UNKNOWN:
-                batteryStatus = "Unknown";
-                break;
-            case BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE:
-                batteryStatus = "Over Voltage";
-                break;
-            case BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE:
-                batteryStatus = "Unspecified Failure";
-                break;
-            default:
-                batteryStatus = "Error - Could not receive";
-                break;
-        }
-        return batteryStatus;
+        String batStat = "";
+
+        if( health == BatteryManager.BATTERY_HEALTH_COLD )
+            batStat = "Cold";
+
+        else if( health == BatteryManager.BATTERY_HEALTH_DEAD )
+            batStat = "Dead";
+
+        else if( health == BatteryManager.BATTERY_HEALTH_GOOD )
+            batStat = "Good";
+
+        else if( health == BatteryManager.BATTERY_HEALTH_OVERHEAT )
+            batStat = "Overheat";
+
+        else if( health == BatteryManager.BATTERY_HEALTH_UNKNOWN )
+            batStat = "Unknown";
+
+        else if( health == BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE )
+            batStat = "Over Voltage";
+
+        else if( health == BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE )
+            batStat = "Unspecified Failure";
+        else
+            batStat = "Error";
+
+        return batStat;
     }
 
     public void initBatteryItems() {
-        batteryProgressBar.setMax(100);
+        progressBarOfBattery.setMax(100);
         Intent i = new Intent(this.getActivity(), batteryService.getClass());
         getActivity().startService(i);
 
@@ -305,7 +322,7 @@ public class BatteryFragment extends Fragment {
         editor.apply();
     }
 
-    @OnCheckedChanged(R.id.lowBatMuteSwitch)
+    @OnCheckedChanged(R.id.batteryMuteOnLowSwitch)
     public void muteLowBatTrigger(boolean checked) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(Preferences.SILENT_LOW_BAT_TRIGGER, checked);
@@ -318,7 +335,7 @@ public class BatteryFragment extends Fragment {
         startActivity(i);
     }
 
-    @OnClick({R.id.lowBatMuteText})
+    @OnClick({R.id.batteryMuteOnLowText})
     public void setPhoneToSilent(View view) {
         audioController.muteThePhone(SILENT_MODE);
     }
@@ -388,42 +405,37 @@ public class BatteryFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Boolean result) {
-            batteryProgressBar.setProgress((int) (batteryPercentage * 100));
-            batteryCurrentValue.setText("" + (int) (batteryPercentage * 100));
+            progressBarOfBattery.setProgress((int) (batteryPercentage * 100));
+            currentBatteryValue.setText("" + (int) (batteryPercentage * 100));
 
-            batteryHealth.setTextColor(health.equals("Good") ? getResources().getColor(R.color.green) : getResources().getColor(R.color.red));
-            batteryHealth.setText(health);
+            healthOfBattery.setTextColor(health.equals("Good") ? getResources().getColor(R.color.green) : getResources().getColor(R.color.red));
+            healthOfBattery.setText(health);
 
-            Float floatVoltage = (float) (voltage) / 1000;
-            batteryVoltage.setText("" + floatVoltage + " V");
+            Float voltageOfBattery = (float) (voltage) / 1000;
+            batteryVoltage.setText("" + voltageOfBattery + " V");
 
-            Float floatTemperature = (float) (temperature) / 10;
-            if (floatTemperature > 45) {
-                batteryTemp.setTextColor(getResources().getColor(R.color.red));
-            } else if (floatTemperature <= 45 && floatTemperature > 35) {
-                batteryTemp.setTextColor(getResources().getColor(R.color.yellow));
+            Float tempOfBattery = (float) (temperature) / 10;
+            if (tempOfBattery > 45) {
+                textViewbatteryTemp.setTextColor(getResources().getColor(R.color.red));
+            } else if (tempOfBattery <= 45 && tempOfBattery > 35) {
+                textViewbatteryTemp.setTextColor(getResources().getColor(R.color.yellow));
             } else {
-                batteryTemp.setTextColor(getResources().getColor(R.color.green));
+                textViewbatteryTemp.setTextColor(getResources().getColor(R.color.green));
             }
-            batteryTemp.setText("" + floatTemperature + " °C");
+            textViewbatteryTemp.setText("" + tempOfBattery + " °C");
 
-            switch (plugged) {
-                case BatteryManager.BATTERY_PLUGGED_AC:
-                    batteryPlugged.setText("AC");
-                    batteryPlugged.setTextColor(getResources().getColor(R.color.green));
-                    break;
-                case BatteryManager.BATTERY_PLUGGED_USB:
-                    batteryPlugged.setText("USB");
-                    batteryPlugged.setTextColor(getResources().getColor(R.color.green));
-                    break;
-                case BatteryManager.BATTERY_PLUGGED_WIRELESS:
-                    batteryPlugged.setText("Wireless");
-                    batteryPlugged.setTextColor(getResources().getColor(R.color.green));
-                    break;
-                default:
-                    batteryPlugged.setText("Not Plugged");
-                    batteryPlugged.setTextColor(Color.LTGRAY);
-                    break;
+            if (plugged == BatteryManager.BATTERY_PLUGGED_AC) {
+                batteryPlugged.setText("AC");
+                batteryPlugged.setTextColor(getResources().getColor(R.color.green));
+            } else if (plugged == BatteryManager.BATTERY_PLUGGED_USB) {
+                batteryPlugged.setText("USB");
+                batteryPlugged.setTextColor(getResources().getColor(R.color.green));
+            } else if (plugged == BatteryManager.BATTERY_PLUGGED_WIRELESS) {
+                batteryPlugged.setText("Wireless");
+                batteryPlugged.setTextColor(getResources().getColor(R.color.green));
+            } else {
+                batteryPlugged.setText("Not Plugged");
+                batteryPlugged.setTextColor(Color.LTGRAY);
             }
         }
     }

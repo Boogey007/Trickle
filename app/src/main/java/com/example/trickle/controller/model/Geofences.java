@@ -41,13 +41,8 @@ public class Geofences {
         public int currentlyEntered;
 
         public String getRelevantId() {
-            if (customId != null && customId.length() > 0) {
-               return customId;
-            }
-            if (name != null && name.length() > 0) {
-                return name;
-            }
-            return uuid;
+            if (customId != null && customId.length() > 0) return customId;
+            return name != null && name.length() > 0 ? name : uuid;
         }
 
         public Geofence(

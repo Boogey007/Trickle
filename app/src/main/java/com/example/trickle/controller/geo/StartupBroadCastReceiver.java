@@ -19,11 +19,6 @@ public class StartupBroadCastReceiver extends BroadcastReceiver {
 
     public static final String TAG = "Geofencing";
 
-    /**
-    * This class receives geofence transition events from Location Services, in the
-    * form of an Intent containing the transition type and geofence id(s) that triggered
-    * the event.
-    */
     @Override
     public void onReceive(final Context context, final Intent intent) {
         Uri uri = Uri.parse("content://" + "com.example.trickle.controller" + "/geofences");
@@ -39,10 +34,10 @@ public class StartupBroadCastReceiver extends BroadcastReceiver {
                         items.add(item);
                     }
                 }
-                Intent startServiceIntent = new Intent(context, LocativeService.class);
-                startServiceIntent.putExtra(LocativeService.EXTRA_ACTION, LocativeService.Action.ADD);
-                startServiceIntent.putExtra(LocativeService.EXTRA_GEOFENCE, items);
-                context.startService(startServiceIntent);
+                Intent startIntent = new Intent(context, LocativeService.class);
+                startIntent.putExtra(LocativeService.EXTRA_ACTION, LocativeService.Action.ADD);
+                startIntent.putExtra(LocativeService.EXTRA_GEOFENCE, items);
+                context.startService(startIntent);
             }
         });
 

@@ -191,46 +191,37 @@ public class ControllerFragment extends Fragment {
                 @Override
                 public void run() {
                     for (int i = 0; i < params.length; i++) {
-                        switch (i) {
-                            case 0:
-                                if (params[i] == 1) {
-                                    wifiSwitch.setChecked(true);
-                                } else if (params[i] == -1) {
-                                    wifiSwitch.setChecked(false);
-                                }
-                                break;
-                            case 1:
-                                if (params[i] == 1) {
-                                    mobileDataSwitch.setChecked(true);
-                                } else if (params[i] == -1) {
-                                    mobileDataSwitch.setChecked(false);
-                                }
-                                break;
-                            case 2:
-                                break;
-                            case 3:
-                                if (params[i] == 1) {
-                                    flightModeSwitch.setChecked(true);
-                                } else if (params[i] == -1) {
-                                    flightModeSwitch.setChecked(false);
-                                }
-                                break;
-                            case 4:
-                                if (params[i] == 1) {
-                                    hotspotSwitch.setChecked(true);
-                                } else if (params[i] == -1) {
-                                    hotspotSwitch.setChecked(false);
-                                }
-                                break;
-                            case 5:
-                                if (params[i] == 1) {
-                                    gpsSwitch.setChecked(true);
-                                } else if (params[i] == -1) {
-                                    gpsSwitch.setChecked(false);
-                                }
-                                break;
-                            default:
-                                break;
+                        if (i == 0) {
+                            if (params[i] == 1) {
+                                wifiSwitch.setChecked(true);
+                            } else if (params[i] == -1) {
+                                wifiSwitch.setChecked(false);
+                            }
+                        } else if (i == 1) {
+                            if (params[i] == 1) {
+                                mobileDataSwitch.setChecked(true);
+                            } else if (params[i] == -1) {
+                                mobileDataSwitch.setChecked(false);
+                            }
+                        } else if (i == 2) {
+                        } else if (i == 3) {
+                            if (params[i] == 1) {
+                                flightModeSwitch.setChecked(true);
+                            } else if (params[i] == -1) {
+                                flightModeSwitch.setChecked(false);
+                            }
+                        } else if (i == 4) {
+                            if (params[i] == 1) {
+                                hotspotSwitch.setChecked(true);
+                            } else if (params[i] == -1) {
+                                hotspotSwitch.setChecked(false);
+                            }
+                        } else if (i == 5) {
+                            if (params[i] == 1) {
+                                gpsSwitch.setChecked(true);
+                            } else if (params[i] == -1) {
+                                gpsSwitch.setChecked(false);
+                            }
                         }
                     }
                 }
